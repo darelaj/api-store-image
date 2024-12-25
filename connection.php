@@ -7,9 +7,7 @@ $dbname = "default";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-if ($conn) {
-  echo "Connection Success";
-} else {
+if (!$conn) {
   echo "Connection Failed";
 }
 
