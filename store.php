@@ -37,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $uploadDirectory = 'images/';
 
-    $uniqueFileName = time() . '.jpg'; // Assuming JPEG format
+    $fileNameToDatabase = uniqid();
 
-    $fileNameToDatabase = time();
+    $uniqueFileName = $fileNameToDatabase . '.jpg';
 
     $destination = $uploadDirectory . $uniqueFileName;
 
