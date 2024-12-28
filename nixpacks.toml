@@ -4,21 +4,21 @@ nixPkgs = ["...", "python311Packages.supervisor"]
 [phases.build]
 cmds = [
     "mkdir -p /etc/supervisor/conf.d/",
-    "cp /assets/worker-*.conf /etc/supervisor/conf.d/",
-    "cp /assets/supervisord.conf /etc/supervisord.conf",
-    "chmod +x /assets/start.sh",
+    "cp /worker-*.conf /etc/supervisor/conf.d/",
+    "cp /supervisord.conf /etc/supervisord.conf",
+    "chmod +x /start.sh",
     "..."
 ]
 
 [start]
-cmd = '/assets/start.sh'
+cmd = '/start.sh'
 
 [staticAssets]
 "start.sh" = '''
 #!/bin/bash
 
 # Transform the nginx configuration
-node /assets/scripts/prestart.mjs /assets/nginx.template.conf /etc/nginx.conf
+node /scripts/prestart.mjs /nginx.template.conf /etc/nginx.conf
 
 # Start supervisor
 supervisord -c /etc/supervisord.conf -n
@@ -26,14 +26,14 @@ supervisord -c /etc/supervisord.conf -n
 
 "supervisord.conf" = '''
 [unix_http_server]
-file=/assets/supervisor.sock
+file=/supervisor.sock
 
 [supervisord]
 logfile=/var/log/supervisord.log
 logfile_maxbytes=50MB
 logfile_backups=10
 loglevel=info
-pidfile=/assets/supervisord.pid
+pidfile=/supervisord.pid
 nodaemon=false
 silent=false
 minfds=1024
@@ -43,10 +43,10 @@ minprocs=200
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 [supervisorctl]
-serverurl=unix:///assets/supervisor.sock
+serverurl=unix:///supervisor.sock
 
 [include]
-files = /etc/supervisor/conf.d/*.conf
+files = /worker-*.conf
 '''
 
 "worker-nginx.conf" = '''
@@ -62,7 +62,7 @@ stderr_logfile=/var/log/worker-nginx.log
 "worker-phpfpm.conf" = '''
 [program:worker-phpfpm]
 process_name=%(program_name)s_%(process_num)02d
-command=php-fpm -y /assets/php-fpm.conf -F
+command=php-fpm -y /php-fpm.conf -F
 autostart=true
 autorestart=true
 stdout_logfile=/var/log/worker-phpfpm.log
@@ -107,11 +107,11 @@ daemon off;
 worker_rlimit_nofile 8192;
 
 events {
-  worker_connections  4096;  # Default: 1024
+  worker_connections  4096;
 }
 
 http {
-    include    $!{nginx}/conf/mime.types;
+    include    /mime.types;
     index    index.html index.htm index.php;
 
     default_type application/octet-stream;
@@ -122,58 +122,38 @@ http {
     error_log /var/log/nginx-error.log;
     sendfile     on;
     tcp_nopush   on;
-    server_names_hash_bucket_size 128; # this seems to be required for some vhosts
+    server_names_hash_bucket_size 128;
 
     server {
         listen ${PORT};
         listen [::]:${PORT};
         server_name localhost;
 
-        $if(NIXPACKS_PHP_ROOT_DIR) (
-            root ${NIXPACKS_PHP_ROOT_DIR};
-        ) else (
-            root /;
-        )
+        root /;  # Root directory is set to '/'
+        
+        index index.php;
 
         add_header X-Content-Type-Options "nosniff";
-
         client_max_body_size 35M;
-     
-        index index.php;
-     
-        charset utf-8;
-     
-        $if(IS_LARAVEL) (
-            location / {
-                try_files $uri $uri/ /index.php?$query_string;
-            }
-        ) else ()
         
-        $if(NIXPACKS_PHP_FALLBACK_PATH) (
-          location / {
-            try_files $uri $uri/ ${NIXPACKS_PHP_FALLBACK_PATH}?$query_string;
-          }
-        ) else ()
-     
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+
         location = /favicon.ico { access_log off; log_not_found off; }
         location = /robots.txt  { access_log off; log_not_found off; }
-     
-        $if(IS_LARAVEL) (
-            error_page 404 /index.php;
-        ) else ()
-     
+
         location ~ \.php$ {
             fastcgi_pass 127.0.0.1:9000;
-            fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-            include $!{nginx}/conf/fastcgi_params;
-            include $!{nginx}/conf/fastcgi.conf;
-
+            fastcgi_param SCRIPT_FILENAME /$fastcgi_script_name;
+            include fastcgi_params;
             fastcgi_param PHP_VALUE "upload_max_filesize=30M \n post_max_size=35M";
         }
-     
+
         location ~ /\.(?!well-known).* {
             deny all;
         }
     }
 }
 '''
+
