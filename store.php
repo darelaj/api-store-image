@@ -26,16 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  // if (empty($authorizationHeader)) {
-  //   echo json_encode(array('status' => 'failed', 'message' => 'Anda Belum Login'));
-  //   exit;
-  // }
-
   if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
     // $userId = $_SERVER['HTTP_AUTHORIZATION'];
 
-    $uploadDirectory = 'images/';
+    $uploadDirectory = __DIR__ . '/images/';
 
     $fileNameToDatabase = uniqid();
 
@@ -43,10 +38,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $destination = $uploadDirectory . $uniqueFileName;
 
-    $query = mysqli_query($conn, "INSERT INTO images (imageId) VALUES ('$fileNameToDatabase')");
 
     // Move the uploaded file to the specified destination
-    if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
+    if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+
+      $query = mysqli_query($conn, "INSERT INTO images (imageId) VALUES ('$fileNameToDatabase')");
+      if (!$query) {
+        echo json_encode(
+          array(
+            'status' => 'failed',
+            'message' => 'Failed to save file'
+          )
+        );
+        exit;
+      }
       // File upload successful
       echo json_encode(
         array(
