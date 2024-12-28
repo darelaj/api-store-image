@@ -1,22 +1,14 @@
-[
-phases.setup
-]
+[phases.setup]
 nixPkgs = ["php"]
 
-[
-start
-]
+[start]
 cmd = "php -S 0.0.0.0:${PORT}"
 
-[
-variables
-]
+[variable]
 PHP_UPLOAD_MAX_FILESIZE = "100M"
 PHP_POST_MAX_SIZE = "100M"
 
-[
-phases.build
-]
+[phases.build]
 cmds = [
     "echo 'upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}' > php.ini",
     "echo 'post_max_size = ${PHP_POST_MAX_SIZE}' >> php.ini"
