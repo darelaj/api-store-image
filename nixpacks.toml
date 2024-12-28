@@ -4,14 +4,15 @@ nixPkgs = ["...", "python311Packages.supervisor"]
 [phases.build]
 cmds = [
     "mkdir -p /etc/supervisor/conf.d/",
-    "cp /worker-*.conf /etc/supervisor/conf.d/",
-    "cp /supervisord.conf /etc/supervisord.conf",
-    "chmod +x /start.sh",
+    "cp /assets/worker-*.conf /etc/supervisor/conf.d/",
+    "cp /assets/supervisord.conf /etc/supervisord.conf",
+    "chmod +x /assets/start.sh",
     "..."
 ]
 
 [start]
-cmd = '/start.sh'
+cmd = '/assets/start.sh'
+
 
 [staticAssets]
 "start.sh" = '''
