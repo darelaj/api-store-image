@@ -132,7 +132,7 @@ http {
         $if(NIXPACKS_PHP_ROOT_DIR) (
             root ${NIXPACKS_PHP_ROOT_DIR};
         ) else (
-            root /app;
+            root /;
         )
 
         add_header X-Content-Type-Options "nosniff";
