@@ -29,12 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
     // $userId = $_SERVER['HTTP_AUTHORIZATION'];
-
     $uploadDirectory = __DIR__ . '/images/';
 
-    $fileNameToDatabase = uniqid();
+    $fileNameToDatabase = pathinfo($_FILES['image']['name'], PATHINFO_FILENAME);
 
-    $uniqueFileName = $fileNameToDatabase . '.jpg';
+    $uniqueFileName = $fileNameToDatabase;
 
     $destination = $uploadDirectory . $uniqueFileName;
 
