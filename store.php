@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $fileNameToDatabase = pathinfo($_FILES['image']['name'], PATHINFO_FILENAME);
 
-    $uniqueFileName = $fileNameToDatabase;
+    $uniqueFileName = $fileNameToDatabase . '.jpg';
 
     $destination = $uploadDirectory . $uniqueFileName;
 
