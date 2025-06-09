@@ -52,9 +52,9 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
       exit;
     }
 
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    if (isset($_POST['id'])) {
 
-      $userId = $_SERVER['HTTP_AUTHORIZATION'];
+      $id = $_POST['id'];
       $judul = $_POST['judul'] ?? '';
       $deskripsi = $_POST['deskripsi'] ?? '';
       $langkah = $_POST['langkah'] ?? '';
@@ -69,45 +69,117 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         exit;
       }
 
-      $uploadDirectory = __DIR__ . '/images/';
+      if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
-      $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
+        $userId = $_SERVER['HTTP_AUTHORIZATION'];
 
-      $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
+        $uploadDirectory = __DIR__ . '/images/';
 
-      $destination = $uploadDirectory . $uniqueFileJudul;
+        $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
 
-      $query = mysqli_query($conn, "INSERT INTO food_recipe (userId, judul, deskripsi, langkah, imageId, mine) VALUES ('$userId', '$judul', '$deskripsi', '$langkah', '$fileJudulToDatabase', 1)");
+        $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
 
-      // Move the uploaded file to the specified destination
-      if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
-        // File upload successful
-        echo json_encode(
-          array(
-            'status' => 'success',
-            'message' => 'File uploaded successfully',
-          )
-        );
+        $destination = $uploadDirectory . $uniqueFileJudul;
+
+        // Update the database with the new image and other details
+        $query = mysqli_query($conn, "UPDATE food_recipe SET judul='$judul', deskripsi='$deskripsi', langkah='$langkah', imageId='$fileJudulToDatabase' WHERE id='$id'");
+
+        // Move the uploaded file to the specified destination
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
+          // File upload successful
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'File uploaded and data updated successfully',
+            )
+          );
+        } else {
+          // Failed to save the file or update the database
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to save file or update data'
+            )
+          );
+        }
+
       } else {
-        // Failed to save the file
-        echo json_encode(
-          array(
-            'status' => 'failed',
-            'message' => 'Failed to save file'
-          )
-        );
+        $query = mysqli_query($conn, "UPDATE food_recipe SET judul='$judul', deskripsi='$deskripsi', langkah='$langkah' WHERE id='$id'");
+
+        if ($query) {
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'Data updated successfully'
+            )
+          );
+        } else {
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to update data'
+            )
+          );
+        }
       }
 
     } else {
-      // No file uploaded or error occurred during upload
-      echo json_encode(
-        array(
-          'status' => 'failed',
-          'message' => 'No file uploaded or error occurred during upload'
-        )
-      );
-    }
+      if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
+        $userId = $_SERVER['HTTP_AUTHORIZATION'];
+        $judul = $_POST['judul'] ?? '';
+        $deskripsi = $_POST['deskripsi'] ?? '';
+        $langkah = $_POST['langkah'] ?? '';
+
+        if (empty($judul) || empty($deskripsi) || empty($langkah)) {
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Judul, Deskripsi, dan Langkah-Langkah harus diisi'
+            )
+          );
+          exit;
+        }
+
+        $uploadDirectory = __DIR__ . '/images/';
+
+        $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
+
+        $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
+
+        $destination = $uploadDirectory . $uniqueFileJudul;
+
+        $query = mysqli_query($conn, "INSERT INTO food_recipe (userId, judul, deskripsi, langkah, imageId, mine) VALUES ('$userId', '$judul', '$deskripsi', '$langkah', '$fileJudulToDatabase', 1)");
+
+        // Move the uploaded file to the specified destination
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
+          // File upload successful
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'File uploaded successfully',
+            )
+          );
+        } else {
+          // Failed to save the file
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to save file'
+            )
+          );
+        }
+
+      } else {
+        // No file uploaded or error occurred during upload
+        echo json_encode(
+          array(
+            'status' => 'failed',
+            'message' => 'No file uploaded or error occurred during upload'
+          )
+        );
+      }
+    }
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
@@ -129,46 +201,6 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         )
       );
 
-    }
-
-  }
-
-  if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-
-    parse_str(file_get_contents("php://input"), $put_vars);
-
-    $id = $put_vars['id'] ?? null;
-    $userId = $authorizationHeader;
-    $judul = $put_vars['judul'] ?? '';
-    $deskripsi = $put_vars['deskripsi'] ?? '';
-    $langkah = $put_vars['langkah'] ?? '';
-
-    if (empty($id) || empty($judul) || empty($deskripsi) || empty($langkah)) {
-      echo json_encode(
-        array(
-          'status' => 'failed',
-          'message' => 'Id, Judul, Deskripsi, dan Langkah-Langkah harus diisi'
-        )
-      );
-      exit;
-    }
-
-    $query = mysqli_query($conn, "UPDATE food_recipe SET judul='$judul', deskripsi='$deskripsi', langkah='$langkah' WHERE id='$id' AND userId='$userId'");
-
-    if ($query) {
-      echo json_encode(
-        array(
-          'status' => 'success',
-          'message' => 'Data updated successfully'
-        )
-      );
-    } else {
-      echo json_encode(
-        array(
-          'status' => 'failed',
-          'message' => 'Failed to update data'
-        )
-      );
     }
 
   }
