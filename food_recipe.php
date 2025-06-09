@@ -133,6 +133,46 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
   }
 
+  if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+
+    parse_str(file_get_contents("php://input"), $put_vars);
+
+    $id = $put_vars['id'] ?? null;
+    $userId = $authorizationHeader;
+    $judul = $put_vars['judul'] ?? '';
+    $deskripsi = $put_vars['deskripsi'] ?? '';
+    $langkah = $put_vars['langkah'] ?? '';
+
+    if (empty($id) || empty($judul) || empty($deskripsi) || empty($langkah)) {
+      echo json_encode(
+        array(
+          'status' => 'failed',
+          'message' => 'Id, Judul, Deskripsi, dan Langkah-Langkah harus diisi'
+        )
+      );
+      exit;
+    }
+
+    $query = mysqli_query($conn, "UPDATE food_recipe SET judul='$judul', deskripsi='$deskripsi', langkah='$langkah' WHERE id='$id' AND userId='$userId'");
+
+    if ($query) {
+      echo json_encode(
+        array(
+          'status' => 'success',
+          'message' => 'Data updated successfully'
+        )
+      );
+    } else {
+      echo json_encode(
+        array(
+          'status' => 'failed',
+          'message' => 'Failed to update data'
+        )
+      );
+    }
+
+  }
+
   // echo json_encode(array('message' => 'Email: ' . $authorizationHeader));
 } else {
   echo json_encode(
