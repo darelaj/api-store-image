@@ -3,7 +3,7 @@
 include_once 'connection.php';
 
 $create_table = mysqli_query(
-  $con,
+  $conn,
   "CREATE TABLE IF NOT EXISTS food_recipe (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId VARCHAR(255) NOT NULL,
@@ -18,7 +18,7 @@ if (!$create_table) {
   echo json_encode(
     array(
       'status' => 'failed',
-      'message' => 'Failed to create table: ' . mysqli_error($con)
+      'message' => 'Failed to create table: ' . mysqli_error($conn)
     )
   );
   exit;
@@ -30,7 +30,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
   // METHOD GET ALL IN DATABASE
   if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    $sql = mysqli_query($con, "SELECT * FROM food_recipe WHERE userId = '$authorizationHeader'");
+    $sql = mysqli_query($conn, "SELECT * FROM food_recipe WHERE userId = '$authorizationHeader'");
 
     $result = array();
     while ($row = mysqli_fetch_array($sql)) {
@@ -86,7 +86,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $destination = $uploadDirectory . $uniqueFileJudul;
 
-      $query = mysqli_query($con, "INSERT INTO food_recipe (userId, judul, deskripsi, langkah, imageId) VALUES ('$userId', '$judul', '$deskripsi', '$langkah', '$fileJudulToDatabase')");
+      $query = mysqli_query($conn, "INSERT INTO food_recipe (userId, judul, deskripsi, langkah, imageId) VALUES ('$userId', '$judul', '$deskripsi', '$langkah', '$fileJudulToDatabase')");
 
       // Move the uploaded file to the specified destination
       if (move_uploaded_file($_FILES['image']['tmp_judul'], $destination) && $query) {
@@ -121,7 +121,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
   if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 
-    $sql = mysqli_query($con, "DELETE FROM food_recipe WHERE id=" . $_GET['id']);
+    $sql = mysqli_query($conn, "DELETE FROM food_recipe WHERE id=" . $_GET['id']);
 
     if ($sql) {
       echo json_encode(
