@@ -32,7 +32,8 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
           'judul' => $row['judul'],
           'deskripsi' => $row['deskripsi'],
           'harga' => $row['harga'],
-          'imageId' => $row['imageId']
+          'imageId' => $row['imageId'],
+          'mine' => $row['mine']
         )
       );
     }
@@ -76,7 +77,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $destination = $uploadDirectory . $uniqueFileJudul;
 
-      $query = mysqli_query($conn, "INSERT INTO makeup (userId, judul, deskripsi, harga, imageId) VALUES ('$userId', '$judul', '$deskripsi', '$harga', '$fileJudulToDatabase')");
+      $query = mysqli_query($conn, "INSERT INTO makeup (userId, judul, deskripsi, harga, imageId, mine) VALUES ('$userId', '$judul', '$deskripsi', '$harga', '$fileJudulToDatabase', 1)");
 
       // Move the uploaded file to the specified destination
       if (move_uploaded_file($_FILES['image']['tmp_judul'], $destination) && $query) {
