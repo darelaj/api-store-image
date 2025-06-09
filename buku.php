@@ -68,7 +68,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         exit;
       }
 
-      $uploadDirectory = 'images/';
+      $uploadDirectory = __DIR__ . '/images/';
 
       $uniqueFileJudul_buku = $userId . '-' . $judul_buku . '-' . time() . '.jpg'; // Assuming JPEG format
 
