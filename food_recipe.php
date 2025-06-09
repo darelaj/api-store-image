@@ -77,7 +77,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $destination = $uploadDirectory . $uniqueFileJudul;
 
-      $query = mysqli_query($conn, "INSERT INTO food_recipe (userId, judul, deskripsi, langkah, imageId) VALUES ('$userId', '$judul', '$deskripsi', '$langkah', '$fileJudulToDatabase', 1)");
+      $query = mysqli_query($conn, "INSERT INTO food_recipe (userId, judul, deskripsi, langkah, imageId, mine) VALUES ('$userId', '$judul', '$deskripsi', '$langkah', '$fileJudulToDatabase', 1)");
 
       // Move the uploaded file to the specified destination
       if (move_uploaded_file($_FILES['image']['tmp_judul'], $destination) && $query) {
