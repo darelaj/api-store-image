@@ -1,6 +1,6 @@
 <?php
 
-include_once 'api.php';
+include_once 'connection.php';
 
 $create_table = mysqli_query(
   $con,
