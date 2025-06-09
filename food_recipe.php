@@ -9,7 +9,7 @@ $create_table = mysqli_query(
     userId VARCHAR(255) NOT NULL,
     judul VARCHAR(255) NOT NULL,
     deskripsi VARCHAR(255) NOT NULL,
-    langkah VARCHAR(255) NOT NULL,
+    langkah TEXT NOT NULL,
     imageId VARCHAR(255) NOT NULL
   )"
 );
