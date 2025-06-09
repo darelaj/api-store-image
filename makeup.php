@@ -4,12 +4,12 @@ include_once 'connection.php';
 
 $create_table = mysqli_query(
   $conn,
-  "CREATE TABLE IF NOT EXISTS food_recipe (
+  "CREATE TABLE IF NOT EXISTS makeup (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId VARCHAR(255) NOT NULL,
     judul VARCHAR(255) NOT NULL,
     deskripsi VARCHAR(255) NOT NULL,
-    langkah TEXT NOT NULL,
+    harga VARCHAR(255) NOT NULL,
     imageId VARCHAR(255) NOT NULL
   )"
 );
@@ -20,7 +20,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
   // METHOD GET ALL IN DATABASE
   if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    $sql = mysqli_query($conn, "SELECT * FROM food_recipe WHERE userId = '$authorizationHeader'");
+    $sql = mysqli_query($conn, "SELECT * FROM makeup WHERE userId = '$authorizationHeader'");
 
     $result = array();
     while ($row = mysqli_fetch_array($sql)) {
@@ -31,7 +31,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
           'userId' => $row['userId'],
           'judul' => $row['judul'],
           'deskripsi' => $row['deskripsi'],
-          'langkah' => $row['langkah'],
+          'harga' => $row['harga'],
           'imageId' => $row['imageId']
         )
       );
@@ -56,13 +56,13 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
       $userId = $_SERVER['HTTP_AUTHORIZATION'];
       $judul = $_POST['judul'] ?? '';
       $deskripsi = $_POST['deskripsi'] ?? '';
-      $langkah = $_POST['langkah'] ?? '';
+      $harga = $_POST['harga'] ?? '';
 
-      if (empty($judul) || empty($deskripsi) || empty($langkah)) {
+      if (empty($judul) || empty($deskripsi) || empty($harga)) {
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Judul, Deskripsi, dan Langkah-Langkah harus diisi'
+            'message' => 'Judul, Deskripsi, dan Harga harus diisi'
           )
         );
         exit;
@@ -76,7 +76,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $destination = $uploadDirectory . $uniqueFileJudul;
 
-      $query = mysqli_query($conn, "INSERT INTO food_recipe (userId, judul, deskripsi, langkah, imageId) VALUES ('$userId', '$judul', '$deskripsi', '$langkah', '$fileJudulToDatabase')");
+      $query = mysqli_query($conn, "INSERT INTO makeup (userId, judul, deskripsi, harga, imageId) VALUES ('$userId', '$judul', '$deskripsi', '$harga', '$fileJudulToDatabase')");
 
       // Move the uploaded file to the specified destination
       if (move_uploaded_file($_FILES['image']['tmp_judul'], $destination) && $query) {
@@ -111,7 +111,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
   if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 
-    $sql = mysqli_query($conn, "DELETE FROM food_recipe WHERE id=" . $_GET['id']);
+    $sql = mysqli_query($conn, "DELETE FROM makeup WHERE id=" . $_GET['id']);
 
     if ($sql) {
       echo json_encode(
