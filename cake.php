@@ -7,7 +7,7 @@ $create_table = mysqli_query(
   "CREATE TABLE IF NOT EXISTS cake (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId VARCHAR(255) NOT NULL,
-    judul VARCHAR(255) NOT NULL,
+    namaKue VARCHAR(255) NOT NULL,
     deskripsi VARCHAR(255) NOT NULL,
     harga VARCHAR(255) NOT NULL,
     imageId VARCHAR(255) NOT NULL
@@ -29,7 +29,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         array(
           'id' => $row['id'],
           'userId' => $row['userId'],
-          'judul' => $row['judul'],
+          'namaKue' => $row['namaKue'],
           'deskripsi' => $row['deskripsi'],
           'harga' => $row['harga'],
           'imageId' => $row['imageId'],
@@ -55,15 +55,15 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
       $userId = $_SERVER['HTTP_AUTHORIZATION'];
-      $judul = $_POST['judul'] ?? '';
+      $namaKue = $_POST['namaKue'] ?? '';
       $deskripsi = $_POST['deskripsi'] ?? '';
       $harga = $_POST['harga'] ?? '';
 
-      if (empty($judul) || empty($deskripsi) || empty($harga)) {
+      if (empty($namaKue) || empty($deskripsi) || empty($harga)) {
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Judul, Deskripsi, dan Harga harus diisi'
+            'message' => 'NamaKue, Deskripsi, dan Harga harus diisi'
           )
         );
         exit;
@@ -71,13 +71,13 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $uploadDirectory = __DIR__ . '/images/';
 
-      $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
+      $uniqueFileNamaKue = $userId . '-' . $namaKue . '-' . time() . '.jpg'; // Assuming JPEG format
 
-      $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
+      $fileNamaKueToDatabase = $userId . '-' . $namaKue . '-' . time();
 
-      $destination = $uploadDirectory . $uniqueFileJudul;
+      $destination = $uploadDirectory . $uniqueFileNamaKue;
 
-      $query = mysqli_query($conn, "INSERT INTO cake (userId, judul, deskripsi, harga, imageId, mine) VALUES ('$userId', '$judul', '$deskripsi', '$harga', '$fileJudulToDatabase', 1)");
+      $query = mysqli_query($conn, "INSERT INTO cake (userId, namaKue, deskripsi, harga, imageId, mine) VALUES ('$userId', '$namaKue', '$deskripsi', '$harga', '$fileNamaKueToDatabase', 1)");
 
       // Move the uploaded file to the specified destination
       if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
