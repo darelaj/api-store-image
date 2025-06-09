@@ -76,7 +76,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
       $query = mysqli_query($conn, "INSERT INTO mybook (userId, judul, penulis, imageId) VALUES ('$userId', '$judul', '$penulis', '$fileJudulToDatabase')");
 
       // Move the uploaded file to the specified destination
-      if (move_uploaded_file($_FILES['image']['tmp_judul'], $destination) && $query) {
+      if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
         // File upload successful
         echo json_encode(
           array(

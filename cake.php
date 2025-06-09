@@ -80,7 +80,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
       $query = mysqli_query($conn, "INSERT INTO cake (userId, judul, deskripsi, harga, imageId, mine) VALUES ('$userId', '$judul', '$deskripsi', '$harga', '$fileJudulToDatabase', 1)");
 
       // Move the uploaded file to the specified destination
-      if (move_uploaded_file($_FILES['image']['tmp_judul'], $destination) && $query) {
+      if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
         // File upload successful
         echo json_encode(
           array(
