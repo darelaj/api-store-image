@@ -7,8 +7,8 @@ $create_table = mysqli_query(
   "CREATE TABLE IF NOT EXISTS buku (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId VARCHAR(255) NOT NULL,
-    judul VARCHAR(255) NOT NULL,
-    deskripsi VARCHAR(255) NOT NULL,
+    judul_buku VARCHAR(255) NOT NULL,
+    deskripsi_buku VARCHAR(255) NOT NULL,
     review_buku VARCHAR(255) NOT NULL,
     imageId VARCHAR(255) NOT NULL
   )"
@@ -29,8 +29,8 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         array(
           'id' => $row['id'],
           'userId' => $row['userId'],
-          'judul' => $row['judul'],
-          'deskripsi' => $row['deskripsi'],
+          'judul_buku' => $row['judul_buku'],
+          'deskripsi_buku' => $row['deskripsi_buku'],
           'review_buku' => $row['review_buku'],
           'imageId' => $row['imageId']
         )
@@ -54,15 +54,15 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
       $userId = $_SERVER['HTTP_AUTHORIZATION'];
-      $judul = $_POST['judul'] ?? '';
-      $deskripsi = $_POST['deskripsi'] ?? '';
+      $judul_buku = $_POST['judul_buku'] ?? '';
+      $deskripsi_buku = $_POST['deskripsi_buku'] ?? '';
       $review_buku = $_POST['review_buku'] ?? '';
 
-      if (empty($judul) || empty($deskripsi) || empty($review_buku)) {
+      if (empty($judul_buku) || empty($deskripsi_buku) || empty($review_buku)) {
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Judul, Deskripsi, dan Review buku harus diisi'
+            'message' => 'Judul buku, Deskripsi buku, dan Review buku harus diisi'
           )
         );
         exit;
@@ -70,16 +70,16 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $uploadDirectory = 'images/';
 
-      $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
+      $uniqueFileJudul_buku = $userId . '-' . $judul_buku . '-' . time() . '.jpg'; // Assuming JPEG format
 
-      $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
+      $fileJudul_bukuToDatabase = $userId . '-' . $judul_buku . '-' . time();
 
-      $destination = $uploadDirectory . $uniqueFileJudul;
+      $destination = $uploadDirectory . $uniqueFileJudul_buku;
 
-      $query = mysqli_query($conn, "INSERT INTO buku (userId, judul, deskripsi, review_buku, imageId) VALUES ('$userId', '$judul', '$deskripsi', '$review_buku', '$fileJudulToDatabase')");
+      $query = mysqli_query($conn, "INSERT INTO buku (userId, judul_buku, deskripsi_buku, review_buku, imageId) VALUES ('$userId', '$judul_buku', '$deskripsi_buku', '$review_buku', '$fileJudul_bukuToDatabase')");
 
       // Move the uploaded file to the specified destination
-      if (move_uploaded_file($_FILES['image']['tmp_judul'], $destination) && $query) {
+      if (move_uploaded_file($_FILES['image']['tmp_judul_buku'], $destination) && $query) {
         // File upload successful
         echo json_encode(
           array(
