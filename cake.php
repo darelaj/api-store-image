@@ -61,7 +61,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'NamaKue, dan Harga harus diisi'
+            'message' => 'Nama Kue, dan Harga harus diisi'
           )
         );
         exit;

@@ -62,7 +62,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Nama kegiatan, Deskripsi kegiatan, dan Tanggal kegiatan harus diisi'
+            'message' => 'Judul buku, Deskripsi buku, dan Review harus diisi'
           )
         );
         exit;
