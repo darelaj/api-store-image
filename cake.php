@@ -8,7 +8,6 @@ $create_table = mysqli_query(
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId VARCHAR(255) NOT NULL,
     namaKue VARCHAR(255) NOT NULL,
-    deskripsi VARCHAR(255) NOT NULL,
     harga VARCHAR(255) NOT NULL,
     imageId VARCHAR(255) NOT NULL
   )"
@@ -30,7 +29,6 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
           'id' => $row['id'],
           'userId' => $row['userId'],
           'namaKue' => $row['namaKue'],
-          'deskripsi' => $row['deskripsi'],
           'harga' => $row['harga'],
           'imageId' => $row['imageId'],
           'mine' => $row['mine']
@@ -56,14 +54,13 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $userId = $_SERVER['HTTP_AUTHORIZATION'];
       $namaKue = $_POST['namaKue'] ?? '';
-      $deskripsi = $_POST['deskripsi'] ?? '';
       $harga = $_POST['harga'] ?? '';
 
-      if (empty($namaKue) || empty($deskripsi) || empty($harga)) {
+      if (empty($namaKue) || empty($harga)) {
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'NamaKue, Deskripsi, dan Harga harus diisi'
+            'message' => 'NamaKue, dan Harga harus diisi'
           )
         );
         exit;
@@ -77,7 +74,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $destination = $uploadDirectory . $uniqueFileNamaKue;
 
-      $query = mysqli_query($conn, "INSERT INTO cake (userId, namaKue, deskripsi, harga, imageId, mine) VALUES ('$userId', '$namaKue', '$deskripsi', '$harga', '$fileNamaKueToDatabase', 1)");
+      $query = mysqli_query($conn, "INSERT INTO cake (userId, namaKue, harga, imageId, mine) VALUES ('$userId', '$namaKue', '$harga', '$fileNamaKueToDatabase', 1)");
 
       // Move the uploaded file to the specified destination
       if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
