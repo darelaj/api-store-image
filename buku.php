@@ -8,7 +8,7 @@ $create_table = mysqli_query(
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId VARCHAR(255) NOT NULL,
     judul_buku VARCHAR(255) NOT NULL,
-    deskripsi_buku VARCHAR(255) NOT NULL,
+    penulis_buku VARCHAR(255) NOT NULL,
     review_buku VARCHAR(255) NOT NULL,
     imageId VARCHAR(255) NOT NULL
   )"
@@ -30,7 +30,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
           'id' => $row['id'],
           'userId' => $row['userId'],
           'judul_buku' => $row['judul_buku'],
-          'deskripsi_buku' => $row['deskripsi_buku'],
+          'penulis_buku' => $row['penulis_buku'],
           'review_buku' => $row['review_buku'],
           'imageId' => $row['imageId']
         ]
@@ -55,14 +55,14 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
       $id = $_POST['id'];
       $judul_buku = $_POST['judul_buku'] ?? '';
-      $deskripsi_buku = $_POST['deskripsi_buku'] ?? '';
+      $penulis_buku = $_POST['penulis_buku'] ?? '';
       $review_buku = $_POST['review_buku'] ?? '';
 
-      if (empty($judul_buku) || empty($deskripsi_buku) || empty($review_buku)) {
+      if (empty($judul_buku) || empty($penulis_buku) || empty($review_buku)) {
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Judul buku, Deskripsi buku, dan Review harus diisi'
+            'message' => 'Judul buku, Penulis buku, dan Review harus diisi'
           )
         );
         exit;
@@ -81,7 +81,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         $destination = $uploadDirectory . $uniqueFileName;
 
         // Update the database with the new image and other details
-        $query = mysqli_query($conn, "UPDATE buku SET judul_buku='$judul_buku', deskripsi_buku='$deskripsi_buku', review_buku='$review_buku', imageId='$fileNameToDatabase' WHERE id='$id'");
+        $query = mysqli_query($conn, "UPDATE buku SET judul_buku='$judul_buku', penulis_buku='$penulis_buku', review_buku='$review_buku', imageId='$fileNameToDatabase' WHERE id='$id'");
 
         // Move the uploaded file to the specified destination
         if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) { // File upload successful
@@ -101,7 +101,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         }
 
       } else { // kalau tidak ada gambar yang diupload
-        $query = mysqli_query($conn, "UPDATE buku SET judul_buku='$judul_buku', deskripsi_buku='$deskripsi_buku', review_buku='$review_buku' WHERE id='$id'");
+        $query = mysqli_query($conn, "UPDATE buku SET judul_buku='$judul_buku', penulis_buku='$penulis_buku', review_buku='$review_buku' WHERE id='$id'");
 
         if ($query) {
           echo json_encode(
@@ -124,14 +124,14 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
         $userId = $_SERVER['HTTP_AUTHORIZATION'];
         $judul_buku = $_POST['judul_buku'] ?? '';
-        $deskripsi_buku = $_POST['deskripsi_buku'] ?? '';
+        $penulis_buku = $_POST['penulis_buku'] ?? '';
         $review_buku = $_POST['review_buku'] ?? '';
 
-        if (empty($judul_buku) || empty($deskripsi_buku) || empty($review_buku)) {
+        if (empty($judul_buku) || empty($penulis_buku) || empty($review_buku)) {
           echo json_encode(
             array(
               'status' => 'failed',
-              'message' => 'Judul buku, Deskripsi buku, dan Review buku harus diisi'
+              'message' => 'Judul buku, Penulis buku, dan Review buku harus diisi'
             )
           );
           exit;
@@ -145,7 +145,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
         $destination = $uploadDirectory . $uniqueFileName;
 
-        $query = mysqli_query($conn, "INSERT INTO buku (userId, judul_buku, deskripsi_buku, review_buku, imageId) VALUES ('$userId', '$judul_buku', '$deskripsi_buku', '$review_buku', '$fileNameToDatabase')");
+        $query = mysqli_query($conn, "INSERT INTO buku (userId, judul_buku, penulis_buku, review_buku, imageId) VALUES ('$userId', '$judul_buku', '$penulis_buku', '$review_buku', '$fileNameToDatabase')");
 
         // Move the uploaded file to the specified destination
         if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
