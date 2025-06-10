@@ -14,7 +14,7 @@ $create_table = mysqli_query(
 );
 
 if (isset($_GET['doc'])) {
-  php ?>
+  ?>
   <!DOCTYPE html>
   <html lang="id">
 
@@ -107,15 +107,15 @@ if (isset($_GET['doc'])) {
         <td>
           JSON array berisi daftar buku milik user:<br /><br />
           <pre>
-    [
-      {
-        "id": 1,
-        "userId": "user123",
-        "judul": "Buku A",
-        "penulis": "Penulis A",
-        "imageId": "user123-Buku A-1717980990"
-      }
-    ]</pre>
+      [
+        {
+          "id": 1,
+          "userId": "user123",
+          "judul": "Buku A",
+          "penulis": "Penulis A",
+          "imageId": "user123-Buku A-1717980990"
+        }
+      ]</pre>
         </td>
       </tr>
     </table>
@@ -148,10 +148,10 @@ if (isset($_GET['doc'])) {
         <td>
           JSON:<br />
           <pre>
-    {
-      "status": "success",
-      "message": "File uploaded successfully"
-    }</pre>
+      {
+        "status": "success",
+        "message": "File uploaded successfully"
+      }</pre>
         </td>
       </tr>
     </table>
@@ -185,10 +185,10 @@ if (isset($_GET['doc'])) {
         <td>
           JSON:<br />
           <pre>
-    {
-      "status": "success",
-      "message": "Data updated successfully"
-    }</pre>
+      {
+        "status": "success",
+        "message": "Data updated successfully"
+      }</pre>
         </td>
       </tr>
     </table>
@@ -216,10 +216,10 @@ if (isset($_GET['doc'])) {
         <td>
           JSON:<br />
           <pre>
-    {
-      "status": "success",
-      "message": "Data and image deleted successfully"
-    }</pre>
+      {
+        "status": "success",
+        "message": "Data and image deleted successfully"
+      }</pre>
         </td>
       </tr>
     </table>
