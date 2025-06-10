@@ -112,23 +112,35 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
   if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 
-    $sql = mysqli_query($conn, "DELETE FROM makeup WHERE id=" . $_GET['id']);
+    $id = $_GET['id'];
+    $sql = mysqli_query($conn, "SELECT imageId FROM makeup WHERE id=$id");
+    $row = mysqli_fetch_assoc($sql);
 
-    if ($sql) {
-      echo json_encode(
-        array(
-          'status' => 'success',
-          'message' => 'Data deleted successfully'
-        )
-      );
-    } else {
-      echo json_encode(
-        array(
-          'status' => 'failed',
-          'message' => 'Failed to delete data'
-        )
-      );
+    if ($row) {
+      $fileNameToDelete = $row['imageId'] . '.jpg';
+      $filePath = __DIR__ . '/images/' . $fileNameToDelete;
 
+      if (file_exists($filePath)) {
+        unlink($filePath);
+      }
+
+      $deleteSql = mysqli_query($conn, "DELETE FROM makeup WHERE id=$id");
+
+      if ($deleteSql) {
+        echo json_encode(
+          array(
+            'status' => 'success',
+            'message' => 'Data and image deleted successfully'
+          )
+        );
+      } else {
+        echo json_encode(
+          array(
+            'status' => 'failed',
+            'message' => 'Failed to delete data'
+          )
+        );
+      }
     }
 
   }
