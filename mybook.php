@@ -13,6 +13,228 @@ $create_table = mysqli_query(
   )"
 );
 
+if (isset($_GET['doc'])) {
+  php ?>
+  <!DOCTYPE html>
+  <html lang="id">
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>MyBook API Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #fff;
+        color: #333;
+        margin: 2rem;
+        line-height: 1.6;
+      }
+
+      h1 {
+        font-size: 2rem;
+        color: #222;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+        margin-top: 2rem;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f5f5f5;
+        font-weight: bold;
+      }
+
+      code {
+        background: #f0f0f0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: Consolas, monospace;
+      }
+
+      small {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      footer {
+        margin-top: 3rem;
+        border-top: 1px solid #eee;
+        padding-top: 1rem;
+        font-size: 0.9rem;
+        color: #aaa;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>📚 MyBook API</h1>
+    <p>Ini adalah API untuk mengelola data buku dan gambar milik pengguna.</p>
+
+    <h2>Mengambil Data Buku</h2>
+    <table>
+      <tr>
+        <th>Method</th>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td><code>/mybook.php</code></td>
+      </tr>
+      <tr>
+        <th>Header</th>
+        <td><code>Authorization: &lt;userId&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Output</th>
+        <td>
+          JSON array berisi daftar buku milik user:<br /><br />
+          <pre>
+    [
+      {
+        "id": 1,
+        "userId": "user123",
+        "judul": "Buku A",
+        "penulis": "Penulis A",
+        "imageId": "user123-Buku A-1717980990"
+      }
+    ]</pre>
+        </td>
+      </tr>
+    </table>
+
+    <h2>Menambahkan Buku Baru</h2>
+    <table>
+      <tr>
+        <th>Method</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td><code>/mybook.php</code></td>
+      </tr>
+      <tr>
+        <th>Header</th>
+        <td><code>Authorization: &lt;userId&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Request Body</th>
+        <td>
+          Form-data (multipart/form-data):<br />
+          <code>judul</code> - judul buku<br />
+          <code>penulis</code> - nama penulis<br />
+          <code>image</code> - file gambar (JPEG)
+        </td>
+      </tr>
+      <tr>
+        <th>Output</th>
+        <td>
+          JSON:<br />
+          <pre>
+    {
+      "status": "success",
+      "message": "File uploaded successfully"
+    }</pre>
+        </td>
+      </tr>
+    </table>
+
+    <h2>Memperbarui Data Buku</h2>
+    <table>
+      <tr>
+        <th>Method</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td><code>/mybook.php</code></td>
+      </tr>
+      <tr>
+        <th>Header</th>
+        <td><code>Authorization: &lt;userId&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Request Body</th>
+        <td>
+          Form-data (multipart/form-data):<br />
+          <code>id</code> - ID buku yang akan diupdate<br />
+          <code>judul</code> - judul baru<br />
+          <code>penulis</code> - penulis baru<br />
+          <code>image</code> - (opsional) file gambar baru (JPEG)
+        </td>
+      </tr>
+      <tr>
+        <th>Output</th>
+        <td>
+          JSON:<br />
+          <pre>
+    {
+      "status": "success",
+      "message": "Data updated successfully"
+    }</pre>
+        </td>
+      </tr>
+    </table>
+
+    <h2>Menghapus Buku</h2>
+    <table>
+      <tr>
+        <th>Method</th>
+        <td>DELETE</td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td><code>/mybook.php?id=&lt;id&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Header</th>
+        <td><code>Authorization: &lt;userId&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Parameter</th>
+        <td><code>id</code> - ID buku yang akan dihapus</td>
+      </tr>
+      <tr>
+        <th>Output</th>
+        <td>
+          JSON:<br />
+          <pre>
+    {
+      "status": "success",
+      "message": "Data and image deleted successfully"
+    }</pre>
+        </td>
+      </tr>
+    </table>
+
+    <footer>
+      Copyright ©
+      <?= date('Y') ?>
+      MyBook API. All rights reserved.
+    </footer>
+  </body>
+
+  </html>
+  <?php
+}
+
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
   $authorizationHeader = $_SERVER['HTTP_AUTHORIZATION'];
 
