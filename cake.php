@@ -9,7 +9,8 @@ $create_table = mysqli_query(
     userId VARCHAR(255) NOT NULL,
     namaKue VARCHAR(255) NOT NULL,
     harga VARCHAR(255) NOT NULL,
-    imageId VARCHAR(255) NOT NULL
+    imageId VARCHAR(255) NOT NULL,
+    mine INT NOT NULL DEFAULT 1
   )"
 );
 
