@@ -108,15 +108,15 @@ if (isset($_GET['doc'])) {
         <th>Output</th>
         <td>JSON array data kegiatan:<br><br>
           <pre>[
-                {
-                  "id": 1,
-                  "userId": "user123",
-                  "nama_kegiatan": "Acara A",
-                  "deskripsi_kegiatan": "Deskripsi acara",
-                  "tanggal_kegiatan": "2025-06-10",
-                  "imageId": "user123-Acara A-1717981000"
-                }
-              ]</pre>
+                      {
+                        "id": 1,
+                        "userId": "user123",
+                        "nama_kegiatan": "Acara A",
+                        "deskripsi_kegiatan": "Deskripsi acara",
+                        "tanggal_kegiatan": "2025-06-10",
+                        "imageId": "user123-Acara A-1717981000"
+                      }
+                    ]</pre>
         </td>
       </tr>
     </table>
@@ -149,9 +149,9 @@ if (isset($_GET['doc'])) {
         <th>Output</th>
         <td>
           <pre>{
-                "status": "success",
-                "message": "File uploaded successfully"
-              }</pre>
+                      "status": "success",
+                      "message": "File uploaded successfully"
+                    }</pre>
         </td>
       </tr>
     </table>
@@ -185,9 +185,9 @@ if (isset($_GET['doc'])) {
         <th>Output</th>
         <td>
           <pre>{
-                "status": "success",
-                "message": "Data updated successfully"
-              }</pre>
+                      "status": "success",
+                      "message": "Data updated successfully"
+                    }</pre>
         </td>
       </tr>
     </table>
@@ -200,7 +200,7 @@ if (isset($_GET['doc'])) {
       </tr>
       <tr>
         <th>URL</th>
-        <td><code>/vault_event.php?id=&lt;id&gt;</code></td>
+        <td><code>/vault_event.php</code></td>
       </tr>
       <tr>
         <th>Header</th>
@@ -214,9 +214,9 @@ if (isset($_GET['doc'])) {
         <th>Output</th>
         <td>
           <pre>{
-                "status": "success",
-                "message": "Data and image deleted successfully"
-              }</pre>
+                      "status": "success",
+                      "message": "Data and image deleted successfully"
+                    }</pre>
         </td>
       </tr>
     </table>
@@ -433,12 +433,14 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
   }
 
 } else {
-  echo json_encode(
-    array(
-      'status' => 'failed',
-      'message' => 'Authorization header not set'
-    )
-  );
+  if (!isset($_GET['doc'])) {
+    echo json_encode(
+      array(
+        'status' => 'failed',
+        'message' => 'Authorization header not set'
+      )
+    );
+  }
 }
 
 ?>
