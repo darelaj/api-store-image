@@ -49,9 +49,9 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
       exit;
     }
 
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    if (isset($_POST['id'])) { // unuk update data
 
-      $userId = $_SERVER['HTTP_AUTHORIZATION'];
+      $id = $_POST['id'];
       $judul = $_POST['judul'] ?? '';
       $penulis = $_POST['penulis'] ?? '';
 
@@ -59,51 +59,119 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Judul dan Penulis harus diisi'
+            'message' => 'Nama kegiatan, dan Deskripsi kegiatan harus diisi'
           )
         );
         exit;
       }
 
-      $uploadDirectory = __DIR__ . '/images/';
+      if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) { // kalau ada gambar yang diupload
 
-      $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
+        $userId = $_SERVER['HTTP_AUTHORIZATION'];
 
-      $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
+        $uploadDirectory = __DIR__ . '/images/';
 
-      $destination = $uploadDirectory . $uniqueFileJudul;
+        $uniqueFileName = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
 
-      $query = mysqli_query($conn, "INSERT INTO mybook (userId, judul, penulis, imageId) VALUES ('$userId', '$judul', '$penulis', '$fileJudulToDatabase')");
+        $fileNameToDatabase = $userId . '-' . $judul . '-' . time();
 
-      // Move the uploaded file to the specified destination
-      if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
-        // File upload successful
-        echo json_encode(
-          array(
-            'status' => 'success',
-            'message' => 'File uploaded successfully',
-          )
-        );
+        $destination = $uploadDirectory . $uniqueFileName;
+
+        // Update the database with the new image and other details
+        $query = mysqli_query($conn, "UPDATE mybook SET judul='$judul', penulis='$penulis', imageId='$fileNameToDatabase' WHERE id='$id'");
+
+        // Move the uploaded file to the specified destination
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) { // File upload successful
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'File uploaded and data updated successfully',
+            )
+          );
+        } else { // Failed to save the file or update the database
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to save file or update data'
+            )
+          );
+        }
+
+      } else { // kalau tidak ada gambar yang diupload
+        $query = mysqli_query($conn, "UPDATE mybook SET judul='$judul', penulis='$penulis' WHERE id='$id'");
+
+        if ($query) {
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'Data updated successfully'
+            )
+          );
+        } else {
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to update data'
+            )
+          );
+        }
+      }
+    } else { // untuk menambah data baru
+      if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+
+        $userId = $_SERVER['HTTP_AUTHORIZATION'];
+        $judul = $_POST['judul'] ?? '';
+        $penulis = $_POST['penulis'] ?? '';
+
+        if (empty($judul) || empty($penulis)) {
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Judul dan Penulis harus diisi'
+            )
+          );
+          exit;
+        }
+
+        $uploadDirectory = __DIR__ . '/images/';
+
+        $uniqueFileName = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
+
+        $fileNameToDatabase = $userId . '-' . $judul . '-' . time();
+
+        $destination = $uploadDirectory . $uniqueFileName;
+
+        $query = mysqli_query($conn, "INSERT INTO mybook (userId, judul, penulis, imageId) VALUES ('$userId', '$judul', '$penulis', '$fileNameToDatabase')");
+
+        // Move the uploaded file to the specified destination
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
+          // File upload successful
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'File uploaded successfully',
+            )
+          );
+        } else {
+          // Failed to save the file
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to save file'
+            )
+          );
+        }
+
       } else {
-        // Failed to save the file
+        // No file uploaded or error occurred during upload
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Failed to save file'
+            'message' => 'No file uploaded or error occurred during upload'
           )
         );
       }
-
-    } else {
-      // No file uploaded or error occurred during upload
-      echo json_encode(
-        array(
-          'status' => 'failed',
-          'message' => 'No file uploaded or error occurred during upload'
-        )
-      );
     }
-
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
