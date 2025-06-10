@@ -9,7 +9,7 @@ $create_table = mysqli_query(
     userId VARCHAR(255) NOT NULL,
     nama_makanan VARCHAR(255) NOT NULL,
     lokasi VARCHAR(255) NOT NULL,
-    review DATE NOT NULL,
+    review VARCHAR(255) NOT NULL,
     imageId VARCHAR(255) NOT NULL
   )"
 );
