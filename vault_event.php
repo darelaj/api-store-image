@@ -14,6 +14,224 @@ $create_table = mysqli_query(
   )"
 );
 
+if (isset($_GET['doc'])) {
+  ?>
+  <!DOCTYPE html>
+  <html lang="id">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Vault Event API Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #fff;
+        color: #333;
+        margin: 2rem;
+        line-height: 1.6;
+      }
+
+      h1 {
+        font-size: 2rem;
+        color: #222;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+        margin-top: 2rem;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f5f5f5;
+        font-weight: bold;
+      }
+
+      code {
+        background: #f0f0f0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: Consolas, monospace;
+      }
+
+      small {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      footer {
+        margin-top: 3rem;
+        border-top: 1px solid #eee;
+        padding-top: 1rem;
+        font-size: 0.9rem;
+        color: #aaa;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <h1>📅 Vault Event API</h1>
+    <p>API ini digunakan untuk menyimpan, menampilkan, dan menghapus data kegiatan (event) pengguna.</p>
+
+    <h2>Mengambil Data Kegiatan</h2>
+    <table>
+      <tr>
+        <th>Method</th>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td><code>/vault_event.php</code></td>
+      </tr>
+      <tr>
+        <th>Header</th>
+        <td><code>Authorization: &lt;userId&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Output</th>
+        <td>JSON array data kegiatan:<br><br>
+          <pre>[
+                {
+                  "id": 1,
+                  "userId": "user123",
+                  "nama_kegiatan": "Acara A",
+                  "deskripsi_kegiatan": "Deskripsi acara",
+                  "tanggal_kegiatan": "2025-06-10",
+                  "imageId": "user123-Acara A-1717981000"
+                }
+              ]</pre>
+        </td>
+      </tr>
+    </table>
+
+    <h2>Menambahkan Kegiatan Baru</h2>
+    <table>
+      <tr>
+        <th>Method</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td><code>/vault_event.php</code></td>
+      </tr>
+      <tr>
+        <th>Header</th>
+        <td><code>Authorization: &lt;userId&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Request Body</th>
+        <td>
+          Form-data (multipart/form-data):<br>
+          <code>nama_kegiatan</code> - nama kegiatan<br>
+          <code>deskripsi_kegiatan</code> - deskripsi kegiatan<br>
+          <code>tanggal_kegiatan</code> - tanggal dalam format YYYY-MM-DD<br>
+          <code>image</code> - file gambar (JPEG)
+        </td>
+      </tr>
+      <tr>
+        <th>Output</th>
+        <td>
+          <pre>{
+                "status": "success",
+                "message": "File uploaded successfully"
+              }</pre>
+        </td>
+      </tr>
+    </table>
+
+    <h2>Memperbarui Kegiatan</h2>
+    <table>
+      <tr>
+        <th>Method</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td><code>/vault_event.php</code></td>
+      </tr>
+      <tr>
+        <th>Header</th>
+        <td><code>Authorization: &lt;userId&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Request Body</th>
+        <td>
+          Form-data (multipart/form-data):<br>
+          <code>id</code> - ID kegiatan<br>
+          <code>nama_kegiatan</code> - nama baru<br>
+          <code>deskripsi_kegiatan</code> - deskripsi baru<br>
+          <code>tanggal_kegiatan</code> - tanggal baru<br>
+          <code>image</code> - (opsional) file gambar baru (JPEG)
+        </td>
+      </tr>
+      <tr>
+        <th>Output</th>
+        <td>
+          <pre>{
+                "status": "success",
+                "message": "Data updated successfully"
+              }</pre>
+        </td>
+      </tr>
+    </table>
+
+    <h2>Menghapus Kegiatan</h2>
+    <table>
+      <tr>
+        <th>Method</th>
+        <td>DELETE</td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td><code>/vault_event.php?id=&lt;id&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Header</th>
+        <td><code>Authorization: &lt;userId&gt;</code></td>
+      </tr>
+      <tr>
+        <th>Parameter</th>
+        <td><code>id</code> - ID kegiatan yang akan dihapus</td>
+      </tr>
+      <tr>
+        <th>Output</th>
+        <td>
+          <pre>{
+                "status": "success",
+                "message": "Data and image deleted successfully"
+              }</pre>
+        </td>
+      </tr>
+    </table>
+
+    <footer>
+      Copyright © <?= date('Y') ?> Vault Event API. All rights reserved.
+    </footer>
+
+  </body>
+
+  </html>
+
+  <?php
+}
+
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
   $authorizationHeader = $_SERVER['HTTP_AUTHORIZATION'];
 
