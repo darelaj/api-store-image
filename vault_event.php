@@ -107,16 +107,17 @@ if (isset($_GET['doc'])) {
       <tr>
         <th>Output</th>
         <td>JSON array data kegiatan:<br><br>
-          <pre>[
-                      {
-                        "id": 1,
-                        "userId": "user123",
-                        "nama_kegiatan": "Acara A",
-                        "deskripsi_kegiatan": "Deskripsi acara",
-                        "tanggal_kegiatan": "2025-06-10",
-                        "imageId": "user123-Acara A-1717981000"
-                      }
-                    ]</pre>
+          <pre>
+            [
+              {
+                "id": 1,
+                "userId": "user123",
+                "nama_kegiatan": "Acara A",
+                "deskripsi_kegiatan": "Deskripsi acara",
+                "tanggal_kegiatan": "2025-06-10",
+                "imageId": "user123-Acara A-1717981000"
+              }
+            ]</pre>
         </td>
       </tr>
     </table>
@@ -148,10 +149,11 @@ if (isset($_GET['doc'])) {
       <tr>
         <th>Output</th>
         <td>
-          <pre>{
-                      "status": "success",
-                      "message": "File uploaded successfully"
-                    }</pre>
+          <pre>
+            {
+              "status": "success",
+              "message": "File uploaded successfully"
+            }</pre>
         </td>
       </tr>
     </table>
@@ -184,10 +186,12 @@ if (isset($_GET['doc'])) {
       <tr>
         <th>Output</th>
         <td>
-          <pre>{
-                      "status": "success",
-                      "message": "Data updated successfully"
-                    }</pre>
+          <pre>
+              {
+                "status": "success",
+                "message": "Data updated successfully"
+              }
+                    </pre>
         </td>
       </tr>
     </table>
@@ -213,10 +217,12 @@ if (isset($_GET['doc'])) {
       <tr>
         <th>Output</th>
         <td>
-          <pre>{
-                      "status": "success",
-                      "message": "Data and image deleted successfully"
-                    }</pre>
+          <pre>
+              {
+                "status": "success",
+                "message": "Data and image deleted successfully"
+              }
+          </pre>
         </td>
       </tr>
     </table>
