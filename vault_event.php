@@ -9,7 +9,7 @@ $create_table = mysqli_query(
     userId VARCHAR(255) NOT NULL,
     nama_kegiatan VARCHAR(255) NOT NULL,
     deskripsi_kegiatan VARCHAR(255) NOT NULL,
-    tanggal_kegiatan DATE NOT NULL,
+    tanggal_kegiatan VARCHAR(255) NOT NULL,
     imageId VARCHAR(255) NOT NULL
   )"
 );
@@ -108,16 +108,16 @@ if (isset($_GET['doc'])) {
         <th>Output</th>
         <td>JSON array data kegiatan:<br><br>
           <pre>
-            [
-              {
-                "id": 1,
-                "userId": "user123",
-                "nama_kegiatan": "Acara A",
-                "deskripsi_kegiatan": "Deskripsi acara",
-                "tanggal_kegiatan": "2025-06-10",
-                "imageId": "user123-Acara A-1717981000"
-              }
-            ]</pre>
+              [
+                {
+                  "id": 1,
+                  "userId": "user123",
+                  "nama_kegiatan": "Acara A",
+                  "deskripsi_kegiatan": "Deskripsi acara",
+                  "tanggal_kegiatan": "2025-06-10",
+                  "imageId": "user123-Acara A-1717981000"
+                }
+              ]</pre>
         </td>
       </tr>
     </table>
@@ -150,10 +150,10 @@ if (isset($_GET['doc'])) {
         <th>Output</th>
         <td>
           <pre>
-            {
-              "status": "success",
-              "message": "File uploaded successfully"
-            }</pre>
+              {
+                "status": "success",
+                "message": "File uploaded successfully"
+              }</pre>
         </td>
       </tr>
     </table>
@@ -187,11 +187,11 @@ if (isset($_GET['doc'])) {
         <th>Output</th>
         <td>
           <pre>
-              {
-                "status": "success",
-                "message": "Data updated successfully"
-              }
-                    </pre>
+                {
+                  "status": "success",
+                  "message": "Data updated successfully"
+                }
+                      </pre>
         </td>
       </tr>
     </table>
@@ -218,11 +218,11 @@ if (isset($_GET['doc'])) {
         <th>Output</th>
         <td>
           <pre>
-              {
-                "status": "success",
-                "message": "Data and image deleted successfully"
-              }
-          </pre>
+                {
+                  "status": "success",
+                  "message": "Data and image deleted successfully"
+                }
+            </pre>
         </td>
       </tr>
     </table>
