@@ -51,9 +51,9 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
       exit;
     }
 
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    if (isset($_POST['id'])) {
 
-      $userId = $_SERVER['HTTP_AUTHORIZATION'];
+      $id = $_POST['id'];
       $namaKue = $_POST['namaKue'] ?? '';
       $harga = $_POST['harga'] ?? '';
 
@@ -67,43 +67,112 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         exit;
       }
 
-      $uploadDirectory = __DIR__ . '/images/';
+      if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
-      $uniqueFileNamaKue = $userId . '-' . $namaKue . '-' . time() . '.jpg'; // Assuming JPEG format
+        $uploadDirectory = __DIR__ . '/images/';
 
-      $fileNamaKueToDatabase = $userId . '-' . $namaKue . '-' . time();
+        $uniqueFileName = $authorizationHeader . '-' . $namaKue . '-' . time() . '.jpg'; // Assuming JPEG format
 
-      $destination = $uploadDirectory . $uniqueFileNamaKue;
+        $fileNameToDatabase = $authorizationHeader . '-' . $namaKue . '-' . time();
 
-      $query = mysqli_query($conn, "INSERT INTO cake (userId, namaKue, harga, imageId, mine) VALUES ('$userId', '$namaKue', '$harga', '$fileNamaKueToDatabase', 1)");
+        $destination = $uploadDirectory . $uniqueFileName;
 
-      // Move the uploaded file to the specified destination
-      if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
-        // File upload successful
-        echo json_encode(
-          array(
-            'status' => 'success',
-            'message' => 'File uploaded successfully',
-          )
-        );
+        $query = mysqli_query($conn, "UPDATE cake SET namaKue='$namaKue', harga='$harga', imageId='$fileNameToDatabase' WHERE id=$id");
+
+        // Move the uploaded file to the specified destination
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
+          // File upload successful
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'File uploaded successfully',
+            )
+          );
+        } else {
+          // Failed to save the file
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to save file'
+            )
+          );
+          exit;
+        }
+
       } else {
-        // Failed to save the file
+        $query = mysqli_query($conn, "UPDATE cake SET namaKue='$namaKue', harga='$harga' WHERE id=$id");
+
+        if ($query) {
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'Data updated successfully'
+            )
+          );
+        } else {
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to update data'
+            )
+          );
+        }
+      }
+    } else {
+      if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+
+        $userId = $_SERVER['HTTP_AUTHORIZATION'];
+        $namaKue = $_POST['namaKue'] ?? '';
+        $harga = $_POST['harga'] ?? '';
+
+        if (empty($namaKue) || empty($harga)) {
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Nama Kue, dan Harga harus diisi'
+            )
+          );
+          exit;
+        }
+
+        $uploadDirectory = __DIR__ . '/images/';
+
+        $uniqueFileName = $userId . '-' . $namaKue . '-' . time() . '.jpg'; // Assuming JPEG format
+
+        $fileNameToDatabase = $userId . '-' . $namaKue . '-' . time();
+
+        $destination = $uploadDirectory . $uniqueFileName;
+
+        $query = mysqli_query($conn, "INSERT INTO cake (userId, namaKue, harga, imageId, mine) VALUES ('$userId', '$namaKue', '$harga', '$fileNameToDatabase', 1)");
+
+        // Move the uploaded file to the specified destination
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
+          // File upload successful
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'File uploaded successfully',
+            )
+          );
+        } else {
+          // Failed to save the file
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to save file'
+            )
+          );
+        }
+
+      } else {
+        // No file uploaded or error occurred during upload
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Failed to save file'
+            'message' => 'No file uploaded or error occurred during upload'
           )
         );
       }
-
-    } else {
-      // No file uploaded or error occurred during upload
-      echo json_encode(
-        array(
-          'status' => 'failed',
-          'message' => 'No file uploaded or error occurred during upload'
-        )
-      );
     }
 
   }

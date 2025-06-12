@@ -10,7 +10,8 @@ $create_table = mysqli_query(
     judul VARCHAR(255) NOT NULL,
     deskripsi VARCHAR(255) NOT NULL,
     harga VARCHAR(255) NOT NULL,
-    imageId VARCHAR(255) NOT NULL
+    imageId VARCHAR(255) NOT NULL,
+    mine INT NOT NULL DEFAULT 1
   )"
 );
 
@@ -52,9 +53,9 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
       exit;
     }
 
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    if (isset($_POST['id'])) { // For updating data
 
-      $userId = $_SERVER['HTTP_AUTHORIZATION'];
+      $id = $_POST['id'];
       $judul = $_POST['judul'] ?? '';
       $deskripsi = $_POST['deskripsi'] ?? '';
       $harga = $_POST['harga'] ?? '';
@@ -69,45 +70,117 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         exit;
       }
 
-      $uploadDirectory = __DIR__ . '/images/';
+      if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
-      $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
+        $userId = $authorizationHeader;
 
-      $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
+        $uploadDirectory = __DIR__ . '/images/';
 
-      $destination = $uploadDirectory . $uniqueFileJudul;
+        $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
 
-      $query = mysqli_query($conn, "INSERT INTO makeup (userId, judul, deskripsi, harga, imageId, mine) VALUES ('$userId', '$judul', '$deskripsi', '$harga', '$fileJudulToDatabase', 1)");
+        $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
 
-      // Move the uploaded file to the specified destination
-      if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
-        // File upload successful
-        echo json_encode(
-          array(
-            'status' => 'success',
-            'message' => 'File uploaded successfully',
-          )
-        );
+        $destination = $uploadDirectory . $uniqueFileJudul;
+
+        $query = mysqli_query($conn, "UPDATE makeup SET judul='$judul', deskripsi='$deskripsi', harga='$harga', imageId='$fileJudulToDatabase' WHERE id=$id");
+
+        // Move the uploaded file to the specified destination
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
+          // File upload successful
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'File uploaded successfully',
+            )
+          );
+        } else {
+          // Failed to save the file
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to save file'
+            )
+          );
+          exit;
+        }
+
       } else {
-        // Failed to save the file
+        $query = mysqli_query($conn, "UPDATE makeup SET judul='$judul', deskripsi='$deskripsi', harga='$harga' WHERE id=$id");
+
+        if ($query) {
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'Data updated successfully'
+            )
+          );
+        } else {
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to update data'
+            )
+          );
+        }
+      }
+    } else {
+
+      if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+
+        $userId = $_SERVER['HTTP_AUTHORIZATION'];
+        $judul = $_POST['judul'] ?? '';
+        $deskripsi = $_POST['deskripsi'] ?? '';
+        $harga = $_POST['harga'] ?? '';
+
+        if (empty($judul) || empty($deskripsi) || empty($harga)) {
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Judul, Deskripsi, dan Harga harus diisi'
+            )
+          );
+          exit;
+        }
+
+        $uploadDirectory = __DIR__ . '/images/';
+
+        $uniqueFileJudul = $userId . '-' . $judul . '-' . time() . '.jpg'; // Assuming JPEG format
+
+        $fileJudulToDatabase = $userId . '-' . $judul . '-' . time();
+
+        $destination = $uploadDirectory . $uniqueFileJudul;
+
+        $query = mysqli_query($conn, "INSERT INTO makeup (userId, judul, deskripsi, harga, imageId, mine) VALUES ('$userId', '$judul', '$deskripsi', '$harga', '$fileJudulToDatabase', 1)");
+
+        // Move the uploaded file to the specified destination
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination) && $query) {
+          // File upload successful
+          echo json_encode(
+            array(
+              'status' => 'success',
+              'message' => 'File uploaded successfully',
+            )
+          );
+        } else {
+          // Failed to save the file
+          echo json_encode(
+            array(
+              'status' => 'failed',
+              'message' => 'Failed to save file'
+            )
+          );
+        }
+
+      } else {
+        // No file uploaded or error occurred during upload
         echo json_encode(
           array(
             'status' => 'failed',
-            'message' => 'Failed to save file'
+            'message' => 'No file uploaded or error occurred during upload'
           )
         );
       }
-
-    } else {
-      // No file uploaded or error occurred during upload
-      echo json_encode(
-        array(
-          'status' => 'failed',
-          'message' => 'No file uploaded or error occurred during upload'
-        )
-      );
     }
-
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
