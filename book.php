@@ -10,11 +10,10 @@ $create_table = mysqli_query(
     title VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
     publisher VARCHAR(255) NOT NULL,
-    year DATE DEFAULT NULL,
+    year VARCHAR(255) DEFAULT NULL,
     imageId VARCHAR(255) NOT NULL
   )"
 );
-
 
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
   $authorizationHeader = $_SERVER['HTTP_AUTHORIZATION'];
