@@ -15,6 +15,7 @@ $create_table = mysqli_query(
   )"
 );
 
+
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
   $authorizationHeader = $_SERVER['HTTP_AUTHORIZATION'];
 
